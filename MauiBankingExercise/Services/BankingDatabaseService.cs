@@ -6,82 +6,69 @@ using System.IO;
 using System.Linq;
 
 namespace MauiBankingExercise.Services
-{
-    public class BankingDatabaseService
     {
-        private readonly SQLiteConnection _dbConnection;
-        private static string DbFileName = "BankingApp.db";
-
-        public BankingDatabaseService()
+        public class BankingDatabaseService
         {
-            var dbPath = GetDatabasePath();
-            bool dbExists = File.Exists(dbPath);
+            private readonly SQLiteConnection _db;
+            private static string DbFile = "BankingApp.db";
 
-            if (!dbExists)
+            public BankingDatabaseService()
             {
-                File.Create(dbPath).Dispose();
+                var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DbFile);
+
+                if (!File.Exists(dbPath))
+                    File.Create(dbPath).Dispose();
+
+                _db = new SQLiteConnection(dbPath);
+
+                if (_db.Table<Customer>().Count() == 0)
+                    BankingSeeder.Seed(_db);
             }
 
-            _dbConnection = new SQLiteConnection(dbPath);
+            public List<Customer> GetAllCustomers() => _db.Table<Customer   >().ToList();
+            public Customer GetCustomer(int id) => _db.Table<Customer>().FirstOrDefault(c => c.CustomerId == id);
 
-            if (!dbExists)
+            public List<Account> GetCustomerAccounts(int customerId) =>
+                _db.Table<Account>().Where(a => a.CustomerId == customerId).ToList();
+
+            public List<Transaction> GetAccountTransactions(int accountId, int limit = 10) =>
+                _db.Table<Transaction>()
+                   .Where(t => t.AccountId == accountId)
+                   .OrderByDescending(t => t.TransactionDate)
+                   .Take(limit)
+                   .ToList();
+
+            public AccountType GetAccountType(int id) =>
+                _db.Table<AccountType>().FirstOrDefault(t => t.AccountTypeId == id);
+
+            public TransactionType GetTransactionType(int id) =>
+                _db.Table<TransactionType>().FirstOrDefault(t => t.TransactionTypeId == id);
+
+            public string GetTransactionTypeName(int id) =>
+                GetTransactionType(id)?.Name ?? "Unknown";
+
+            public void AddTransaction(int accountId, decimal amount, int typeId)
             {
-                BankingSeeder.Seed(_dbConnection);
+                var account = _db.Table<Account>().FirstOrDefault(a => a.AccountId == accountId);
+                if (account == null) throw new Exception("Account not found");
+                if (typeId == 2 && account.AccountBalance < amount)
+                    throw new Exception("Insufficient balance");
+
+                if (typeId == 1) account.AccountBalance += amount;
+                if (typeId == 2) account.AccountBalance -= amount;
+
+                _db.Update(account);
+
+                var tx = new Transaction
+                {
+                    AccountId = accountId,
+                    Amount = amount,
+                    TransactionTypeId = typeId,
+                    TransactionDate = DateTime.Now
+                };
+
+                _db.Insert(tx);
             }
-        }
-
-        private string GetDatabasePath()
-        {
-            var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            return Path.Combine(basePath, DbFileName);
-        }
-
-        public List<Customer> GetAllCustomers() => _dbConnection.Table<Customer>().ToList();
-        public Customer GetCustomer(int customerId) => _dbConnection.Table<Customer>().FirstOrDefault(c => c.CustomerId == customerId);
-
-        public List<Account> GetCustomerAccounts(int customerId) =>
-            _dbConnection.Table<Account>().Where(a => a.CustomerId == customerId).ToList();
-
-        public List<Transaction> GetAccountTransactions(int accountId) =>
-            GetAccountTransactions(accountId, 10);
-
-        public List<Transaction> GetAccountTransactions(int accountId, int limit) =>
-            _dbConnection.Table<Transaction>()
-                .Where(t => t.AccountId == accountId)
-                .OrderByDescending(t => t.TransactionDate)
-                .Take(limit)
-                .ToList();
-
-        public AccountType GetAccountType(int accountTypeId) =>
-            _dbConnection.Table<AccountType>().FirstOrDefault(t => t.AccountTypeId == accountTypeId);
-
-        public TransactionType GetTransactionType(int transactionTypeId) =>
-            _dbConnection.Table<TransactionType>().FirstOrDefault(t => t.TransactionTypeId == transactionTypeId);
-
-        public string GetTransactionTypeName(int transactionTypeId) =>
-            GetTransactionType(transactionTypeId)?.Name ?? "Unknown";
-
-        public void AddTransaction(int accountId, decimal amount, int transactionTypeId)
-        {
-            var account = _dbConnection.Table<Account>().FirstOrDefault(a => a.AccountId == accountId);
-            if (account == null) throw new Exception("Account not found");
-            if (transactionTypeId == 2 && account.AccountBalance < amount)
-                throw new Exception("Insufficient balance");
-
-            if (transactionTypeId == 1) account.AccountBalance += amount;
-            if (transactionTypeId == 2) account.AccountBalance -= amount;
-
-            _dbConnection.Update(account);
-
-            var transaction = new Transaction
-            {
-                AccountId = accountId,
-                Amount = amount,
-                TransactionTypeId = transactionTypeId,
-                TransactionDate = DateTime.Now
-            };
-
-            _dbConnection.Insert(transaction);
         }
     }
-}
+

@@ -23,6 +23,6 @@ namespace MauiBankingExercise.Models
         public AssetType AssetType { get; set; }
 
         [ManyToOne]
-        public Customer Customer { get; set; }
+        public  Customer Customer { get; set; }
     }
 }

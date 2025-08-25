@@ -6,26 +6,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MauiBankingExercise.ViewModels;
-
-public class BaseViewModel : INotifyPropertyChanged
+namespace MauiBankingExercise.ViewModels
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected bool SetProperty<T>(ref T backingStore, T value,
-        [CallerMemberName] string propertyName = "")
+    public abstract class BaseViewModel : INotifyPropertyChanged
     {
-        if (EqualityComparer<T>.Default.Equals(backingStore, value))
-            return false;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        backingStore = value;
-        OnPropertyChanged(propertyName);
-        return true;
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
-
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
-
 
 

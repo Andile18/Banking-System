@@ -59,8 +59,8 @@ namespace MauiBankingExercise.Services
             // Seed AssetTypes  
             var assetTypes = new List<AssetType>
         {
-            new AssetType { Name = "Property" },
-            new AssetType { Name = "Vehicle" }
+            new AssetType { Name = "Vehicle" },
+            new AssetType { Name = "Property" }
         };
             foreach (var ast in assetTypes) db.Insert(ast);
 
@@ -109,7 +109,7 @@ namespace MauiBankingExercise.Services
                 EmploymentStatusId = 1,
                 BankId = banks[0].BankId
             },
-            new Customer
+            new Customer    
             {
                 FirstName = "Jane",
                 LastName = "Smith",
@@ -133,21 +133,22 @@ namespace MauiBankingExercise.Services
         {
             new Account
             {
-                AccountNumber = "111111",
+                AccountNumber = "123456789",
                 AccountTypeId = accountTypes[0].AccountTypeId,
                 IsActive = true,
                 CustomerId = customers[0].CustomerId,
-                DateOpened = DateTime.Now.AddYears(-2),
-                AccountBalance = 2500.50m
+                DateOpened = DateTime.Now.AddYears(-1),
+                AccountBalance = 8000.29m
+
             },
             new Account
             {
-                AccountNumber = "222222",
+                AccountNumber = "987654321",
                 AccountTypeId = accountTypes[1].AccountTypeId,
                 IsActive = true,
                 CustomerId = customers[1].CustomerId,
-                DateOpened = DateTime.Now.AddYears(-1),
-                AccountBalance = 3500.75m
+                DateOpened = DateTime.Now.AddYears(-2),
+                AccountBalance = 56600.99m
             }
         };
             foreach (var acc in accounts) db.Insert(acc);
@@ -160,7 +161,7 @@ namespace MauiBankingExercise.Services
                 TransactionTypeId = transactionTypes[0].TransactionTypeId,
                 AccountId = accounts[0].AccountId,
                 TransactionDate = DateTime.Now.AddDays(-10),
-                Amount = 1000m,
+                Amount = 3000m,
                 Description = "Initial deposit"
             },
             new Transaction
@@ -168,7 +169,7 @@ namespace MauiBankingExercise.Services
                 TransactionTypeId = transactionTypes[1].TransactionTypeId,
                 AccountId = accounts[1].AccountId,
                 TransactionDate = DateTime.Now.AddDays(-5),
-                Amount = -500m,
+                Amount = -1000m,
                 Description = "ATM withdrawal"
             }
         };
@@ -201,15 +202,15 @@ namespace MauiBankingExercise.Services
             {
                 AssetTypeId = assetTypes[0].AssetTypeId,
                 CustomerId = customers[0].CustomerId,
-                Value = 100000m,
-                Name = "Home"
+                Value = 900000m,
+                Name = "Boat"
             },
             new Asset
             {
                 AssetTypeId = assetTypes[1].AssetTypeId,
                 CustomerId = customers[1].CustomerId,
                 Value = 20000m,
-                Name = "Car"
+                Name = "Property"
             }
         };
             foreach (var asset in assets) db.Insert(asset);

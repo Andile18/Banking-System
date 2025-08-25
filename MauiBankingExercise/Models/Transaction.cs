@@ -6,8 +6,6 @@ namespace MauiBankingExercise.Models
 {
     public class Transaction
     {
-        internal decimal BalanceAfter;
-
         [PrimaryKey, AutoIncrement]
         public int TransactionId { get; set; }
 

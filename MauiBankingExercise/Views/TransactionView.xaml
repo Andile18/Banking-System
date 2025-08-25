@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:MauiBankingExercise.ViewModels"
+             x:Class="MauiBankingExercise.Views.TransactionView"
+                    Title="Make Transaction">
+
+    <ContentPage.BindingContext>
+        <viewmodels:TransactionViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="#004C3F">
+        <Label Text="New Transaction" FontSize="24" TextColor="White" FontAttributes="Bold"/>
+        <Label Text="Account" TextColor="White"/>
+        <Entry Placeholder="Enter Account ID" Keyboard="Numeric" Text="{Binding SelectedAccount.AccountId}" BackgroundColor="White" TextColor="Black"/>
+        <Label Text="Transaction Type" TextColor="White"/>
+        <Picker ItemsSource="{Binding TransactionTypes}" SelectedItem="{Binding SelectedTransactionType}" BackgroundColor="White" TextColor="Black"/>
+        <Label Text="Amount" TextColor="White"/>
+        <Entry Placeholder="Enter Amount" Keyboard="Numeric" Text="{Binding TransactionAmount}" BackgroundColor="White" TextColor="Black"/>
+        <Button Text="Submit" Command="{Binding SubmitTransactionCommand}" BackgroundColor="White" TextColor="#004C3F" FontAttributes="Bold"/>
+    </VerticalStackLayout>
+</ContentPage>

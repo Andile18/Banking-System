@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiBankingExercise.Views.ClientListView"
+             xmlns:vm="clr-namespace:MauiBankingExercise.ViewModels"
+             xmlns:models="clr-namespace:MauiBankingExercise.Models"
+             x:DataType="vm:ClientListViewModel"
+             Title="Client">
+
+
+
+
+    <CollectionView ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" SelectionMode="Single" SelectionChangedCommand="{Binding SelectClientCommand}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Customer">
+                <Border Padding="15" Margin="8" BackgroundColor="LightGray">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="2"/>
+                    </Border.StrokeShape>
+                    <Grid Padding="10" ColumnSpacing="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label FontAttributes="Bold" FontSize="15" Grid.Row="0" Grid.Column="0">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="FirstName"/>
+                                    <Binding Path="LastName"/>
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+
+                        <Label FontAttributes="Italic" Text="{Binding Email}" TextColor="Blue" FontSize="15" Grid.Row="1" Grid.Column="0"/>
+                    </Grid>
+
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
+</ContentPage>
